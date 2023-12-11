@@ -20,6 +20,7 @@ def generate_options_df(options):
     df_opts = pd.DataFrame.from_records(options)
     df_opts['duration'] = df_opts['expiration'] - df_opts['lastTradeDate']
     df_opts['duration'] = df_opts['duration'].apply(lambda x: x.days)
+    df_opts['remaining'] = df_opts['expiration'].apply(lambda x: (x - datetime.now()).days)
 
     return df_opts
 
@@ -42,10 +43,10 @@ def get_all_options_data(tickers):
     return df_calls, df_puts
 
 
-def convert_options_to_dict(df, expiration_date):
+def convert_options_to_dict(df, expiration_date, underlying_price):
 
     expiration_datetime = datetime.strptime(expiration_date, '%Y-%m-%d')
-    df = df.assign(expiration=expiration_datetime)
+    df = df.assign(expiration=expiration_datetime, price=underlying_price)
     df['lastTradeDate'] = df['lastTradeDate'].apply(lambda x: x.replace(tzinfo=None))
 
     return df.to_dict(orient='records')
@@ -61,8 +62,9 @@ def get_options_data(ticker):
         opt = stock.option_chain(expiration_date)
         opt_calls = opt.calls
         opt_puts = opt.puts
-        calls.append(convert_options_to_dict(opt_calls, expiration_date))
-        puts.append(convert_options_to_dict(opt_puts, expiration_date))
+        underlying_price = opt.underlying['regularMarketPrice']
+        calls.append(convert_options_to_dict(opt_calls, expiration_date, underlying_price))
+        puts.append(convert_options_to_dict(opt_puts, expiration_date, underlying_price))
 
     return calls, puts
 
@@ -70,4 +72,5 @@ def get_options_data(ticker):
 if __name__ == '__main__':
 
     tickers = get_tickers()[:N_TICKERS]
-    print(get_all_options_data(tickers))
+    df_calls, df_puts = get_all_options_data(tickers)
+    print(df_calls, df_puts)
