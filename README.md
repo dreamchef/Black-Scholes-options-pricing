@@ -193,10 +193,8 @@ The R-squared values calculated were as follows:
 
 | Correlation Between                | Value   |
 |------------------------------------|---------|
-| For Bid Price vs. Predicted Price  | 0.7443  |
-| For Ask Price vs. Predicted Price  | 0.7586  |
-
-Table 1: R-squared Values
+| Bid Price vs. Predicted Price  | 0.7443  |
+| Ask Price vs. Predicted Price  | 0.7586  |
 
 These suggest a high-moderate positive correlation between the predictions and actual call prices. However, the model is not nearly perfect. We proceeded to analyze how the model performs under varying market conditions, particularly differing volatility and time-to-expiration.
 
@@ -206,21 +204,67 @@ We separately grouped the set of predicted and actual prices into ranges over vo
 
 ### 2.4.3 Volatility-Based Analysis
 
-We experimented with different groupings until we found the following in which there is an even distribution of option contracts between ranges. Figure 4 (on the following page) shows both the frequencies of options within range and the corresponding accuracies of predictions against bid and ask prices. Noticeably, the prediction strength is low for low volatility and high for high volatility. Recall that the Black-Scholes model assumes a log-normal distribution of underlying asset prices, constant volatility and risk-free rate, no dividends paid, and European exercise style. The predictions are influenced by how well these assumptions hold in each range.
+We experimented with different groupings until we found the following in which there is an even distribution of option contracts between ranges. Figure 4 (on the following page) shows both the frequencies of options within range and the corresponding accuracies of predictions against bid and ask prices.
+ Noticeably, the prediction strength is low for low volatility and high for high volatility. Recall that the Black-Scholes model assumes a log-normal distribution of underlying asset prices, constant volatility and risk-free rate, no dividends paid, and European exercise style. The predictions are influenced by how well these assumptions hold in each range.
 
 In low volatility environments, the Black-Scholes model tends to be more accurate because the assumption of constant volatility is more closely aligned with market conditions. We would expect lower prediction errors in these ranges.
 
 On the other hand, it is unrealistic to assume constant volatility in periods of high volatility. The Black-Scholes model assumes a log-normal distribution of stock prices and cannot accurately capture sudden large moves. We would, therefore, expect this to increase prediction errors.
 
+[fig4](figures/fig1.png)
+
 ### 2.4.4 Remaining Time-Based Analysis
 
 The data was then categorized into ranges determined in a similar fashion of values for time to expiration. Figure 5 shows the distribution of options across different time ranges and the corresponding R² values, showing how prediction accuracy varied over time. Again, how well the assumptions of the model hold in each time range influence the accuracy of the predictions.
+
+[fig5](figures/fig1.png)
 
 The Black-Scholes model accounts for time decay through the time value component of the option price. Predictive accuracy might be higher as the model aligns well with the diminishing time value.
 
 For options with longer times until expiration, the assumption of constant volatility is unrealistic. The volatility is likely to change, which leads to greater predictive errors.
 
+## 3 Error Analysis
 
-[fig4](figures/fig1.png)
+## 3 Error Analysis
 
-[fig5](figures/fig1.png)
+### 3.1 Near-Zero Predicted and Actual Prices
+
+The most obvious anomalies include near-zero forecasts of significantly higher prices and relatively high forecasts of near-zero actual prices. 
+In total, there were 275 cases where such values for the model are zero while the actual quotes differ noticeably from zero. These options have a high average strike price of around 2149.38. Additionally, the average implied volatility is quite small (0.012), leading the model to underprice the options. 
+The model correctly predicted for high prices in 649 cases, whereas bids and asks came near zero. The average strike price is about 410.35 (more realistic), while the spread of strike prices is wider. These options show extremely low average implied volatility near zero, which may also mean they are deep out of the money or possess some other undesirable attributes on the market.
+
+
+### 3.2 Error from Volatility and Time to Expiration
+
+Moreover, we examined what type of changing inputs could be related to greater error. Absolute difference between predictions and actual values, the bid and ask prices, and volatility and remaining time data served to compute the following correlation coefficients:
+
+| Bid/Ask Error vs. Input                  | Correlation Coefficient |
+|---------------------------------------|-------------------------|
+| Bid Error vs. Implied Volatility | -0.151                  |
+| Ask Error vs. Implied Volatility | -0.147                  |
+| Bid Error vs. Remaining Time     | 0.039                   |
+| Ask Error vs. Remaining Time     | 0.027                   |
+
+The prediction errors are slightly negatively correlated with implied volatility and highly positively correlated with the remaining time until expiration.
+
+The relationship of implied volatility and the remaining time until expira- tion and the accuracy of the predicted call prices is not linear. These observed correlations are small, implying that other determinants would probably pre- dict the accuracy of the Black-Scholes model more strongly.
+## 4 Summary and Conclusions
+Our implementation of the Black-Scholes model frequently predicted near- zero price for significantly overpriced options. Such high strike prices coupled with very low implied volatility make it highly likely that the model under- priced the option. The actual evaluation of option value is affected many market factors and speculative trading strategies the model does not consider.
+Most of the prediction errors can be tied back to assumptions that do not hold well in an actual market setting, such as constant volatility. Many market conditions and phenomena are not accounted for in the model.
+Additionally, the since we used American-style option call data, a variety of factors related to calls being exercised before the expiration date are at play, without being accounted by the model and closed solution. At the same time, we did not ascertain to what extent such factors would affect the predictions accuracy.
+These errors, in combination with our explanation of the assumptions inherent in the Black-Scholes model demonstrate the limitations of the Black- Scholes model.
+
+## 4.1 Future Research Directions
+One direction that we could have looked into if we had more time would be considering exotic options. Many of them preclude a closed form solution, but they would have been a good direction to look at with the application side since we had already developed the theory. We also could have looked into models like Black-Scholes that don’t require constant volatility. The main downsides to considering most of these more complex models and options is that the theory is mostly the same, with the exception of no analytical solution, so this would have purely been a computational exercise.
+
+## Appendix: Python code and Data
+
+The Python code used to generate these results and analyses, as well as the data scraped and generated, is in the following repository:
+[https://github.com/slowHands7/financial-pdes](https://github.com/slowHands7/financial-pdes)
+
+## References
+
+1. Ycharts 10-year treasury rate. [https://ycharts.com/indicators/10_year_treasury_rate](https://ycharts.com/indicators/10_year_treasury_rate). Accessed: 2023-12-10.
+2. Yves Achdou, Olivier Bokanowski, and Tony Lelièvre. Partial differential equations in finance. The Encyclopedia of Financial Models, 2, 2012.
+3. Fischer Black and Myron Scholes. The pricing of options and corporate liabilities. Journal of Political Economy, 81(3):637–654, 1973.
+4. Martin Bohner and Yao Zheng. On analytical solutions of the Black–Scholes equation. Applied Mathematics Letters, 22(3):309–313, 2009.
