@@ -9,7 +9,7 @@
 ## Synopsis
 Tests the Black-Scholes model and its performance on forecasting option call prices of a selected option chain dataset. Discusses factors such as volatility and time to expiration that affect the estimations of call option prices and how this occurs within the dynamics of the model.
 
-The model is implemented in [BlackScholes.py](https://github.com/dreamchef/black-scholes-options-pricing/tree/main/BlackScholes.py) The scripts the [results_analysis](https://github.com/dreamchef/black-scholes-options-pricing/tree/main/results_analysis) folder generate the plots shown further down in [Analysis of Results](https://github.com/dreamchef/black-scholes-options-pricing/tree/main?tab=readme-ov-file#analysis-of-results-predicted-vs-actual-call-prices). The [data](https://github.com/dreamchef/black-scholes-options-pricing/tree/main/data) folder contains the input data (scraped from Yahoo Finance using [option_scraperBS.py](https://github.com/dreamchef/black-scholes-options-pricing/blob/main/option_scraperBS.py)) and the output predicted data.
+The model is implemented in [BlackScholes.py](https://github.com/dreamchef/black-scholes-options-pricing/tree/main/BlackScholes.py) The scripts in the [results_analysis](https://github.com/dreamchef/black-scholes-options-pricing/tree/main/results_analysis) folder generate the plots shown [in the following sections](https://github.com/dreamchef/black-scholes-options-pricing/tree/main?tab=readme-ov-file#analysis-of-results-predicted-vs-actual-call-prices). The [data](https://github.com/dreamchef/black-scholes-options-pricing/tree/main/data) folder contains the input data (scraped from Yahoo Finance using [option_scraperBS.py](https://github.com/dreamchef/black-scholes-options-pricing/blob/main/option_scraperBS.py)) and the output predicted data.
 
 # Financial Background
 
@@ -36,7 +36,7 @@ Assumptions:
 - It is possible to borrow any fraction of the price of a security to buy it or to hold it at the short-term interest rate.
 - There are no penalties to short selling. A seller who does not own a security will simply accept the price of the security from a buyer and will agree to settle with the buyer on some future date by paying him an amount equal to the price of the security on that date.
 
-Letting $ S_t $ be the price of a risky asset at time $ t $ and $ S_t^0 $ be the price of a non-risky asset at time $ t $, we can construct the stochastic differential equation that underlies the Black-Scholes model:
+Letting $S_t$ be the price of a risky asset at time $t$ and $S_t^0$ be the price of a non-risky asset at time $t$, we can construct the stochastic differential equation that underlies the Black-Scholes model:
 
 $$ dS_t = S_t(\mu dt + \sigma dB_t) $$
 $$ dS_t^0 = rS_t^0 dt $$
@@ -163,11 +163,11 @@ $$
 
 We proceeded to obtain data on which to test the model. While the closed-form solution is for European-style calls we can meaningfully test the model on American-style calls data since it is rarely optimal to buy before the exercise date. Such data is readily available as it is traded on large exchanges while European-style calls are often traded off-exchange and over-the-counter which would make obtaining such data exceedingly hard to find and aggregate. We collected input data that was generated on December 10th 2023 to be put into the model. We prepared a CSV file from the option chain data with columns for each of the required inputs to the Black-Scholes model: The CSV file was structured as in the following example:
 
-| (Index) | Symbol | Strike       | (Bid) | (Ask) | Volatility | Stock Price | Time to Exp. |
-|----------------|--------------|-------|------------|-------------|--------------|--|
-| 0 | AAPL23...    | 65           | 130.5 | 131.25     | 4.01...     | 195.71       | 4 |
-| 1 | AAPL23...    | 70           | 125.4 | 126        | 4.05...     | 195.71       | 4 |
-| ... |            |              |       |            |             |              | |
+| (Index)|  Symbol  | Strike| (Bid) | (Ask) | Volatility | Stock Price | Time to Exp. |
+|--------|----------|-------|-------|-------|------------|-------------|--------------|
+| 0      | AAPL23...| 65    | 130.5 | 131.25| 4.01...    | 195.71      | 4  |
+| 1      | AAPL23...| 70    | 125.4 | 126   | 4.05...    | 195.71      | 4 |
+| ...    |          |       |       |       |            |             | |
 
 It also contained the actual bid and ask prices which we use later to analyze the predictions. The risk-free interest rate as of December 10th 2023 was 4.23 percent [1]. We proceeded with the testing pipeline as shown in Figure 1. To use this data with the Black-Scholes formula we read the CSV file into the Python code (see appendix).  The code iterates through the time series and calculates call price for each call using the closed solution:
 
