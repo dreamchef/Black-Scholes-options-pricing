@@ -7,6 +7,7 @@
 *Affiliation*: Department of Applied Mathematics, University of Colorado Boulder
 
 ## Synopsis
+
 Tests the Black-Scholes model and its performance on forecasting option call prices of a selected option chain dataset. Discusses factors such as volatility and time to expiration that affect the estimations of call option prices and how this occurs within the dynamics of the model.
 
 The model is implemented in [BlackScholes.py](https://github.com/dreamchef/black-scholes-options-pricing/tree/main/BlackScholes.py) The scripts in the [results_analysis](https://github.com/dreamchef/black-scholes-options-pricing/tree/main/results_analysis) folder generate the plots shown [in the following sections](https://github.com/dreamchef/black-scholes-options-pricing/tree/main?tab=readme-ov-file#analysis-of-results-predicted-vs-actual-call-prices). The [data](https://github.com/dreamchef/black-scholes-options-pricing/tree/main/data) folder contains the input data (scraped from Yahoo Finance using [option_scraperBS.py](https://github.com/dreamchef/black-scholes-options-pricing/blob/main/option_scraperBS.py)) and the output predicted data.
@@ -38,64 +39,97 @@ Assumptions:
 
 Letting $S_t$ be the price of a risky asset at time $t$ and $S_t^0$ be the price of a non-risky asset at time $t$, we can construct the stochastic differential equation that underlies the Black-Scholes model:
 
-$$ dS_t = S_t(\mu dt + \sigma dB_t) $$
-$$ dS_t^0 = rS_t^0 dt $$
+$$
+dS_t = S_t(\mu dt + \sigma dB_t)
+$$
+
+$$
+dS_t^0 = rS_t^0 dt
+$$
 
 where $B_t$ is a Brownian motion, $\mu$ is the mean rate of return, $r$ is the interest rate, and $\sigma > 0$ is the volatility rate. Brownian motion simulates the continuous time random walk that the stock price follows. Let $W_t = B_t + \frac{\mu-r}{\sigma}t$ and let the risk-neutral probability $P$ be defined with respect to $Q$, where $Q$ is the underlying probability function of the probability space where the Brownian motion lies.
 
-$$ dP = exp\left(\frac{r - \mu}{\sigma}dB_s - \frac{1}{2}\left(\frac{r - \mu}{\sigma}\right)^2 ds\right) $$
+$$
+dP = exp\left(\frac{r - \mu}{\sigma}dB_s - \frac{1}{2}\left(\frac{r - \mu}{\sigma}\right)^2 ds\right)
+$$
 
 $W_t$ is still a Brownian motion, and $\frac{S_t}{S_t^0}$ is a martingale. $S_t$ must satisfy the following differential equation on $P$:
 
-$$ dS_t = S_t(rdt + \sigma dW_t) $$
+$$
+dS_t = S_t(rdt + \sigma dW_t)
+$$
 
 Let us now consider a portfolio of $H_t$ risky assets and $H_t^0$ non-risky assets. The value of the complete portfolio at time $t$ is:
 
-$$ P_t = H_t S_t + H_t^0 dS_t^0 $$
+$$
+P_t = H_t S_t + H_t^0 dS_t^0
+$$
 
 If we assume that the portfolio is self-financing or that any manipulation of $H_t$ or $H_t^0$ doesn’t require any inflow or outflow of money:
 
-$$ dP_t = H_t dS_t + H_t^0 dS_t^0 $$
+$$
+dP_t = H_t dS_t + H_t^0 dS_t^0
+$$
 
 From this, we can tell that $\frac{P_t}{S_t^0}$ is also a martingale. Let $\phi$ be the payoff function, and a given time $T > 0$ be the maturity time. Our goal now is to build a portfolio $P_T = \phi(S_T)$. There are many options for $\phi$ depending on what we are dealing with. By the martingale representation theorem, we know that the answer is positive since $\frac{P_t}{S_t^0}$ is a martingale and $\phi(S_T)$ is $ F_t $-measurable. Thus, the portfolio has the following value at time $t$:
 
-$$ P_T = E \left[ e^{-\int_t^T rds} \phi(S_T) | F_t \right] $$
+$$
+P_T = E \left[ e^{-\int_t^T rds} \phi(S_T) | F_t \right]
+$$
 
 We should acknowledge that an analytical solution exists only for vanilla options and when $r$ and $\sigma$ are constant. If $r$ and $\sigma$ were functions of $t$ and $S$, we would only be able to evaluate $\phi$ numerically. Since $S_t$ is a stochastic process, it follows from the Markov Property that:
 
-$$ P_t = p(t, S_t) $$
+$$
+P_t = p(t, S_t)
+$$
 
 where $p$ is a function of $t \in [0, T]$ and $S \in [0, \infty)$ and is the pricing function of the option. Additionally, we know that $p$ is a deterministic function. By the Markov Property of $S_t$:
 
-$$ p(t, x) = E\left[ e^{-\int_t^T r ds} \phi(S_T) \bigg| S_t = x \right] $$
+$$
+p(t, x) = E\left[ e^{-\int_t^T r ds} \phi(S_T) \bigg| S_t = x \right]
+$$
 
 where $(S_{\theta}^x)_t \leq \theta \leq T$ denotes the process solution to $dS_t = S_t(\mu dt + \sigma dB_t)$ starting from $x$ at time $t$:
 
-$$ dS_{\theta}^x = S_{\theta}^x (r d\theta + \sigma dW_{\theta}), \quad \theta \geq t, \quad S_t^x = x $$
+$$
+dS_{\theta}^x = S_{\theta}^x (r d\theta + \sigma dW_{\theta}), \quad \theta \geq t, \quad S_t^x = x
+$$
 
 Ito's lemma states that for a function $V(S, t)$ where $S$ follows a stochastic process defined by an SDE of the same form, the differential $dV$ satisfies:
 
-$$ dV = \left( \frac{\partial V}{\partial t} + \mu S \frac{\partial V}{\partial S} + \frac{1}{2} \sigma^2 S^2 \frac{\partial^2 V}{\partial S^2} \right) dt + \sigma S \frac{\partial V}{\partial S} dW_t $$
+$$
+dV = \left( \frac{\partial V}{\partial t} + \mu S \frac{\partial V}{\partial S} + \frac{1}{2} \sigma^2 S^2 \frac{\partial^2 V}{\partial S^2} \right) dt + \sigma S \frac{\partial V}{\partial S} dW_t
+$$
 
 Now consider a hedging (risk-free) portfolio $\Pi$ consisting of one option and $-\Delta$ shares of stock where $\Delta = \frac{\partial p}{\partial S}$. The portfolio value is:
 
-$$ \Pi = p - \Delta S $$
+$$
+\Pi = p - \Delta S
+$$
 
 The change in the portfolio value is:
 
-$$ d\Pi = dp - \Delta dS $$
+$$
+d\Pi = dp - \Delta dS
+$$
 
 Substituting $dp$ and $dS$ from above and assuming the portfolio to be risk-free (eliminating the $dW_t$ term):
 
-$$ d\Pi = \left( \frac{\partial p}{\partial t} + \frac{1}{2} \sigma^2 S^2 \frac{\partial^2 p}{\partial S^2} \right) dt $$
+$$
+d\Pi = \left( \frac{\partial p}{\partial t} + \frac{1}{2} \sigma^2 S^2 \frac{\partial^2 p}{\partial S^2} \right) dt
+$$
 
 Since $\Pi$ is risk-free and its growth not perturbed by small changes in stock price, it should grow at the constant rate $r$, implying:
 
-$$ d\Pi = r\Pi dt = r(p - \Delta S) dt $$
+$$
+d\Pi = r\Pi dt = r(p - \Delta S) dt
+$$
 
 Equating the expressions for $d\Pi$ and solving for $\frac{\partial p}{\partial t}$, we obtain the Black-Scholes PDE:
 
-$$ \frac{\partial p}{\partial t} + \frac{1}{2} \sigma^2 S^2 \frac{\partial^2 p}{\partial S^2} + rS \frac{\partial p}{\partial S} - rp = 0, \quad p(T, S) = \phi(S) $$
+$$
+\frac{\partial p}{\partial t} + \frac{1}{2} \sigma^2 S^2 \frac{\partial^2 p}{\partial S^2} + rS \frac{\partial p}{\partial S} - rp = 0, \quad p(T, S) = \phi(S)
+$$
 
 ## Closed Solution of the PDE for European Calls
 
@@ -163,19 +197,21 @@ $$
 
 We proceeded to obtain data on which to test the model. While the closed-form solution is for European-style calls we can meaningfully test the model on American-style calls data since it is rarely optimal to buy before the exercise date. Such data is readily available as it is traded on large exchanges while European-style calls are often traded off-exchange and over-the-counter which would make obtaining such data exceedingly hard to find and aggregate. We collected input data that was generated on December 10th 2023 to be put into the model. We prepared a CSV file from the option chain data with columns for each of the required inputs to the Black-Scholes model: The CSV file was structured as in the following example:
 
-| (Index)|  Symbol  | Strike| (Bid) | (Ask) | Volatility | Stock Price | Time to Exp. |
-|--------|----------|-------|-------|-------|------------|-------------|--------------|
-| 0      | AAPL23...| 65    | 130.5 | 131.25| 4.01...    | 195.71      | 4  |
-| 1      | AAPL23...| 70    | 125.4 | 126   | 4.05...    | 195.71      | 4 |
-| ...    |          |       |       |       |            |             | |
+| (Index) | Symbol    | Strike | (Bid) | (Ask)  | Volatility | Stock Price | Time to Exp. |
+| ------- | --------- | ------ | ----- | ------ | ---------- | ----------- | ------------ |
+| 0       | AAPL23... | 65     | 130.5 | 131.25 | 4.01...    | 195.71      | 4            |
+| 1       | AAPL23... | 70     | 125.4 | 126    | 4.05...    | 195.71      | 4            |
+| ...     |           |        |       |        |            |             |              |
 
 It also contained the actual bid and ask prices which we use later to analyze the predictions. The risk-free interest rate as of December 10th 2023 was 4.23 percent [1]. We proceeded with the testing pipeline as shown in Figure 1. To use this data with the Black-Scholes formula we read the CSV file into the Python code (see appendix).  The code iterates through the time series and calculates call price for each call using the closed solution:
 
-$$C(S, t) = S N(d_1) - K e^{-rt} N(d_2)$$
+$$
+C(S, t) = S N(d_1) - K e^{-rt} N(d_2)
+$$
 
 The code predicted prices for each option contract in the dataset. We then had to filter the data due to an issue with NaN values in the predicted prices. Upon initially finding this we expected it had resulted from either very low or high volatility very short time to maturity or extreme differences between the stock and strike prices. Upon examination of the scraped data set we noticed 0 to approximately 23.81 - a very wide range. After filtering out cases of extremely high volatility there were no remaining NaN price predictions and we were able to proceed to analysis.
 
-![fig1](figures/fig1.png)
+`<img src='figures/fig1.png'>`
 
 # Analysis of Results: Predicted vs. Actual Call Prices
 
@@ -189,10 +225,10 @@ The following plots show the Black-Scholes predictions vs. actual prices:
 
 The R-squared values calculated were as follows:
 
-| Correlation Between                | Value   |
-|------------------------------------|---------|
-| Bid Price vs. Predicted Price  | 0.7443  |
-| Ask Price vs. Predicted Price  | 0.7586  |
+| Correlation Between           | Value  |
+| ----------------------------- | ------ |
+| Bid Price vs. Predicted Price | 0.7443 |
+| Ask Price vs. Predicted Price | 0.7586 |
 
 These suggest a high-moderate positive correlation between the predictions and actual call prices. However, the model is not nearly perfect. We proceeded to analyze how the model performs under varying market conditions, particularly differing volatility and time-to-expiration.
 
@@ -225,17 +261,16 @@ For options with longer times until expiration, the assumption of constant volat
 
 ## Near-Zero Predicted and Actual Prices
 
-The most obvious anomalies include near-zero forecasts of significantly higher prices and relatively high forecasts of near-zero actual prices. 
-In total, there were 275 cases where such values for the model are zero while the actual quotes differ noticeably from zero. These options have a high average strike price of around 2149.38. Additionally, the average implied volatility is quite small (0.012), leading the model to underprice the options. 
+The most obvious anomalies include near-zero forecasts of significantly higher prices and relatively high forecasts of near-zero actual prices.
+In total, there were 275 cases where such values for the model are zero while the actual quotes differ noticeably from zero. These options have a high average strike price of around 2149.38. Additionally, the average implied volatility is quite small (0.012), leading the model to underprice the options.
 The model correctly predicted for high prices in 649 cases, whereas bids and asks came near zero. The average strike price is about 410.35 (more realistic), while the spread of strike prices is wider. These options show extremely low average implied volatility near zero, which may also mean they are deep out of the money or possess some other undesirable attributes on the market.
-
 
 ## Error from Volatility and Time to Expiration
 
 Moreover, we examined what type of changing inputs could be related to greater error. Absolute difference between predictions and actual values, the bid and ask prices, and volatility and remaining time data served to compute the following correlation coefficients:
 
-| Bid/Ask Error vs. Input                  | Correlation Coefficient |
-|---------------------------------------|-------------------------|
+| Bid/Ask Error vs. Input          | Correlation Coefficient |
+| -------------------------------- | ----------------------- |
 | Bid Error vs. Implied Volatility | -0.151                  |
 | Ask Error vs. Implied Volatility | -0.147                  |
 | Bid Error vs. Remaining Time     | 0.039                   |
@@ -245,14 +280,15 @@ The prediction errors are slightly negatively correlated with implied volatility
 
 The relationship of implied volatility and the remaining time until expira- tion and the accuracy of the predicted call prices is not linear. These observed correlations are small, implying that other determinants would probably pre- dict the accuracy of the Black-Scholes model more strongly.
 
-
 # Summary and Conclusions
+
 Our implementation of the Black-Scholes model frequently predicted near- zero price for significantly overpriced options. Such high strike prices coupled with very low implied volatility make it highly likely that the model under- priced the option. The actual evaluation of option value is affected many market factors and speculative trading strategies the model does not consider.
 Most of the prediction errors can be tied back to assumptions that do not hold well in an actual market setting, such as constant volatility. Many market conditions and phenomena are not accounted for in the model.
 Additionally, the since we used American-style option call data, a variety of factors related to calls being exercised before the expiration date are at play, without being accounted by the model and closed solution. At the same time, we did not ascertain to what extent such factors would affect the predictions accuracy.
 These errors, in combination with our explanation of the assumptions inherent in the Black-Scholes model demonstrate the limitations of the Black- Scholes model.
 
 ## Future Research Directions
+
 One direction that we could have looked into if we had more time would be considering exotic options. Many of them preclude a closed form solution, but they would have been a good direction to look at with the application side since we had already developed the theory. We also could have looked into models like Black-Scholes that don’t require constant volatility. The main downsides to considering most of these more complex models and options is that the theory is mostly the same, with the exception of no analytical solution, so this would have purely been a computational exercise.
 
 # References
