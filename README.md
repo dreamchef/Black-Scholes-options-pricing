@@ -9,6 +9,8 @@
 ## Synopsis
 Tests the Black-Scholes model the model its performance on forecasting option call prices of a selected option chain dataset. Discusses factors such as volatility and time to expiration that affect the estimations of call option prices and how this occurs within the dynamics of the model.
 
+The model is implemented in [BlackScholes.py](https://github.com/dreamchef/black-scholes-options-pricing/tree/main/BlackScholes.py) The scripts the [results_analysis](https://github.com/dreamchef/black-scholes-options-pricing/tree/main/results_analysis) folder generate the plots shown further down in [Analysis of Results](https://github.com/dreamchef/black-scholes-options-pricing/tree/main?tab=readme-ov-file#analysis-of-results-predicted-vs-actual-call-prices). The [data](https://github.com/dreamchef/black-scholes-options-pricing/tree/main/data) folder contains the input data (scraped from Yahoo Finance using [option_scraperBS.py](https://github.com/dreamchef/black-scholes-options-pricing/blob/main/option_scraperBS.py)) and the output predicted data.
+
 # Financial Background
 
 Stock options are financial derivatives that allow one to buy or sell a stock at a predetermined price (strike price) on or before the specified expiration date; these instruments are employed by investors to hedge, speculate, and earn income. In particular, a call option is an option where you are able to buy a stock at the strike price after, in effect, betting that the stock will reach above this price during its expiry date. This leverage allows controlling more shares with less money - for the cost of the option. There are two types of call options: American-style calls and European-style calls. The difference between them is when the underlying security can be bought for the strike price in relation to the day it expires. American options can be exercised anytime before expiration. On the other hand, European calls can only be exercised at expiration. An Option Chain lists all available call contracts across stocks and expiration dates. Such a chain contains the data necessary for predicting prices using the Black-Scholes model.
@@ -161,11 +163,11 @@ $$
 
 We proceeded to obtain data on which to test the model. While the closed-form solution is for European-style calls we can meaningfully test the model on American-style calls data since it is rarely optimal to buy before the exercise date. Such data is readily available as it is traded on large exchanges while European-style calls are often traded off-exchange and over-the-counter which would make obtaining such data exceedingly hard to find and aggregate. We collected input data that was generated on December 10th 2023 to be put into the model. We prepared a CSV file from the option chain data with columns for each of the required inputs to the Black-Scholes model: The CSV file was structured as in the following example:
 
-| (Index) Symbol | Strike       | (Bid) | (Ask) | Volatility | Stock Price | Time to Exp. |
+| (Index) | Symbol | Strike       | (Bid) | (Ask) | Volatility | Stock Price | Time to Exp. |
 |----------------|--------------|-------|------------|-------------|--------------|--|
-| 0 AAPL23...    | 65           | 130.5 | 131.25     | 4.01...     | 195.71       | 4 |
-| 1 AAPL23...    | 70           | 125.4 | 126        | 4.05...     | 195.71       | 4 |
-| ...            |              |       |            |             |              | |
+| 0 | AAPL23...    | 65           | 130.5 | 131.25     | 4.01...     | 195.71       | 4 |
+| 1 | AAPL23...    | 70           | 125.4 | 126        | 4.05...     | 195.71       | 4 |
+| ... |            |              |       |            |             |              | |
 
 It also contained the actual bid and ask prices which we use later to analyze the predictions. The risk-free interest rate as of December 10th 2023 was 4.23 percent [1]. We proceeded with the testing pipeline as shown in Figure 1. To use this data with the Black-Scholes formula we read the CSV file into the Python code (see appendix).  The code iterates through the time series and calculates call price for each call using the closed solution:
 
@@ -173,15 +175,15 @@ $$C(S, t) = S N(d_1) - K e^{-rt} N(d_2)$$
 
 The code predicted prices for each option contract in the dataset. We then had to filter the data due to an issue with NaN values in the predicted prices. Upon initially finding this we expected it had resulted from either very low or high volatility very short time to maturity or extreme differences between the stock and strike prices. Upon examination of the scraped data set we noticed 0 to approximately 23.81 - a very wide range. After filtering out cases of extremely high volatility there were no remaining NaN price predictions and we were able to proceed to analysis.
 
-[fig1](figures/fig1.png)
+![fig1](figures/fig1.png)
 
 # Analysis of Results: Predicted vs. Actual Call Prices
 
 The following plots show the Black-Scholes predictions vs. actual prices:
 
-[fig2](figures/fig1.png)
+![fig2](figures/fig1.png)
 
-[fig3](figures/fig1.png)
+![fig3](figures/fig1.png)
 
 ## Correlation Between Actual and Predicted Ask/Bid Prices
 
@@ -207,13 +209,13 @@ In low volatility environments, the Black-Scholes model tends to be more accurat
 
 On the other hand, it is unrealistic to assume constant volatility in periods of high volatility. The Black-Scholes model assumes a log-normal distribution of stock prices and cannot accurately capture sudden large moves. We would, therefore, expect this to increase prediction errors.
 
-[fig4](figures/fig1.png)
+![fig4](figures/fig1.png)
 
 ## Remaining-Time Analysis
 
 The data was then categorized into ranges determined in a similar fashion of values for time to expiration. Figure 5 shows the distribution of options across different time ranges and the corresponding R² values, showing how prediction accuracy varied over time. Again, how well the assumptions of the model hold in each time range influence the accuracy of the predictions.
 
-[fig5](figures/fig1.png)
+![fig5](figures/fig1.png)
 
 The Black-Scholes model accounts for time decay through the time value component of the option price. Predictive accuracy might be higher as the model aligns well with the diminishing time value.
 
@@ -252,11 +254,6 @@ These errors, in combination with our explanation of the assumptions inherent in
 
 ## Future Research Directions
 One direction that we could have looked into if we had more time would be considering exotic options. Many of them preclude a closed form solution, but they would have been a good direction to look at with the application side since we had already developed the theory. We also could have looked into models like Black-Scholes that don’t require constant volatility. The main downsides to considering most of these more complex models and options is that the theory is mostly the same, with the exception of no analytical solution, so this would have purely been a computational exercise.
-
-# Appendix: Python code and Data
-
-The Python code used to generate these results and analyses, as well as the data scraped and generated, is in the following repository:
-[https://github.com/slowHands7/financial-pdes](https://github.com/slowHands7/financial-pdes)
 
 # References
 
