@@ -211,15 +211,17 @@ $$
 
 The code predicted prices for each option contract in the dataset. We then had to filter the data due to an issue with NaN values in the predicted prices. Upon initially finding this we expected it had resulted from either very low or high volatility very short time to maturity or extreme differences between the stock and strike prices. Upon examination of the scraped data set we noticed 0 to approximately 23.81 - a very wide range. After filtering out cases of extremely high volatility there were no remaining NaN price predictions and we were able to proceed to analysis.
 
-`<img src='figures/fig1.png'>`
+<img src='figures/fig1.png' height='400' width='auto'>
 
 # Analysis of Results: Predicted vs. Actual Call Prices
 
 The following plots show the Black-Scholes predictions vs. actual prices:
 
-![fig2](figures/fig2.png)
 
-![fig3](figures/fig3.png)
+<img src='figures/fig2.png' height='300' width='auto'>
+
+
+<img src='figures/fig3.png' height='300' width='auto'>
 
 ## Correlation Between Actual and Predicted Ask/Bid Prices
 
@@ -245,13 +247,15 @@ In low volatility environments, the Black-Scholes model tends to be more accurat
 
 On the other hand, it is unrealistic to assume constant volatility in periods of high volatility. The Black-Scholes model assumes a log-normal distribution of stock prices and cannot accurately capture sudden large moves. We would, therefore, expect this to increase prediction errors.
 
-![fig4](figures/fig4.png)
+
+<img src='figures/fig4.png' height='300' width='auto'>
+
 
 ## Remaining-Time Analysis
 
 The data was then categorized into ranges determined in a similar fashion of values for time to expiration. Figure 5 shows the distribution of options across different time ranges and the corresponding R² values, showing how prediction accuracy varied over time. Again, how well the assumptions of the model hold in each time range influence the accuracy of the predictions.
 
-![fig5](figures/fig5.png)
+<img src='figures/fig5.png' height='300' width='auto'>
 
 The Black-Scholes model accounts for time decay through the time value component of the option price. Predictive accuracy might be higher as the model aligns well with the diminishing time value.
 
