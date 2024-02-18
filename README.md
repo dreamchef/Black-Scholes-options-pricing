@@ -181,9 +181,9 @@ The code predicted prices for each option contract in the dataset. We then had t
 
 The following plots show the Black-Scholes predictions vs. actual prices:
 
-![fig2](figures/fig1.png)
+![fig2](figures/fig2.png)
 
-![fig3](figures/fig1.png)
+![fig3](figures/fig3.png)
 
 ## Correlation Between Actual and Predicted Ask/Bid Prices
 
@@ -209,13 +209,13 @@ In low volatility environments, the Black-Scholes model tends to be more accurat
 
 On the other hand, it is unrealistic to assume constant volatility in periods of high volatility. The Black-Scholes model assumes a log-normal distribution of stock prices and cannot accurately capture sudden large moves. We would, therefore, expect this to increase prediction errors.
 
-![fig4](figures/fig1.png)
+![fig4](figures/fig4.png)
 
 ## Remaining-Time Analysis
 
 The data was then categorized into ranges determined in a similar fashion of values for time to expiration. Figure 5 shows the distribution of options across different time ranges and the corresponding R² values, showing how prediction accuracy varied over time. Again, how well the assumptions of the model hold in each time range influence the accuracy of the predictions.
 
-![fig5](figures/fig1.png)
+![fig5](figures/fig5.png)
 
 The Black-Scholes model accounts for time decay through the time value component of the option price. Predictive accuracy might be higher as the model aligns well with the diminishing time value.
 
