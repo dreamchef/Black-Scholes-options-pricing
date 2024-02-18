@@ -161,11 +161,11 @@ $$
 
 We proceeded to obtain data on which to test the model. While the closed-form solution is for European-style calls we can meaningfully test the model on American-style calls data since it is rarely optimal to buy before the exercise date. Such data is readily available as it is traded on large exchanges while European-style calls are often traded off-exchange and over-the-counter which would make obtaining such data exceedingly hard to find and aggregate. We collected input data that was generated on December 10th 2023 to be put into the model. We prepared a CSV file from the option chain data with columns for each of the required inputs to the Black-Scholes model: The CSV file was structured as in the following example:
 
-| (Index) Symbol | Strike (Bid) | (Ask) | Volatility | Stock Price | Time to Exp. |
-|----------------|--------------|-------|------------|-------------|--------------|
-| 0 AAPL23...    | 65           | 130.5 | 131.25     | 4.01...     | 195.71       |
-| 1 AAPL23...    | 70           | 125.4 | 126        | 4.05...     | 195.71       |
-| ...            |              |       |            |             | 4            |
+| (Index) Symbol | Strike       | (Bid) | (Ask) | Volatility | Stock Price | Time to Exp. |
+|----------------|--------------|-------|------------|-------------|--------------|--|
+| 0 AAPL23...    | 65           | 130.5 | 131.25     | 4.01...     | 195.71       | 4 |
+| 1 AAPL23...    | 70           | 125.4 | 126        | 4.05...     | 195.71       | 4 |
+| ...            |              |       |            |             |              | |
 
 It also contained the actual bid and ask prices which we use later to analyze the predictions. The risk-free interest rate as of December 10th 2023 was 4.23 percent [1]. We proceeded with the testing pipeline as shown in Figure 1. To use this data with the Black-Scholes formula we read the CSV file into the Python code (see appendix).  The code iterates through the time series and calculates call price for each call using the closed solution:
 
