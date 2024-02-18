@@ -1,4 +1,4 @@
-# Python Implementation of the Black-Scholes Model for Pricing Call Options
+# Python Implementation and Analysis of the Black-Scholes Model for Pricing Call Options
 
 *Primary Author*: Dani Lisle
 
