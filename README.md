@@ -8,6 +8,9 @@
 
 ## Synopsis
 
+[![GPLv3 License](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+ ![GitHub last commit](https://img.shields.io/github/last-commit/dreamchef/Black-Scholes-options-pricing/main)
+
 Tests the Black-Scholes model and its performance on forecasting option call prices of a selected option chain dataset. Discusses factors such as volatility and time to expiration that affect the estimations of call option prices and how this occurs within the dynamics of the model.
 
 The model is implemented in [BlackScholes.py](https://github.com/dreamchef/black-scholes-options-pricing/tree/main/BlackScholes.py) The scripts in the [results_analysis](https://github.com/dreamchef/black-scholes-options-pricing/tree/main/results_analysis) folder generate the plots shown [in the following sections](https://github.com/dreamchef/black-scholes-options-pricing/tree/main?tab=readme-ov-file#analysis-of-results-predicted-vs-actual-call-prices). The [data](https://github.com/dreamchef/black-scholes-options-pricing/tree/main/data) folder contains the input data (scraped from Yahoo Finance using [option_scraperBS.py](https://github.com/dreamchef/black-scholes-options-pricing/blob/main/option_scraperBS.py)) and the output predicted data.
